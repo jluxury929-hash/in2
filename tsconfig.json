@@ -13,5 +13,6 @@
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
-  "include": ["in2/**/*.ts"]
+  "include": ["in2/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
