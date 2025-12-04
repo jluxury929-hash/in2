@@ -6,7 +6,6 @@ import { Server as WebSocketServer } from 'ws';
 import { config } from '../config';
 import { tradingEngine } from '../engine/tradingEngine';
 import { strategyRegistry } from '../strategies/strategyRegistry';
-import { aiDecisionEngine } from '../ai/decisionEngine';
 import { priceFeedAggregator } from '../market/priceFeeds';
 import { flashLoanEngine } from '../flashloan/flashLoanEngine';
 import { walletManager } from '../blockchain/wallet';
@@ -40,6 +39,7 @@ export class APIServer {
   }
 
   private setupRoutes(): void {
+    // Health check
     this.app.get('/health', (req: Request, res: Response) => {
       res.json({
         status: 'ok',
@@ -48,6 +48,7 @@ export class APIServer {
       });
     });
 
+    // System status
     this.app.get('/api/status', async (req: Request, res: Response) => {
       try {
         const status = tradingEngine.getSystemStatus();
@@ -64,6 +65,7 @@ export class APIServer {
       }
     });
 
+    // Start trading engine
     this.app.post('/api/start', async (req: Request, res: Response) => {
       try {
         if (tradingEngine.isEngineRunning()) {
@@ -84,6 +86,7 @@ export class APIServer {
       }
     });
 
+    // Start UHF engine
     this.app.post('/api/start-uhf', async (req: Request, res: Response) => {
       try {
         const { ultraHighFrequencyEngine } = await import('../engine/ultraHighFrequencyEngine');
@@ -103,6 +106,7 @@ export class APIServer {
       }
     });
 
+    // Stop trading engine
     this.app.post('/api/stop', async (req: Request, res: Response) => {
       try {
         if (!tradingEngine.isEngineRunning()) {
@@ -123,6 +127,7 @@ export class APIServer {
       }
     });
 
+    // Get metrics
     this.app.get('/api/metrics', (req: Request, res: Response) => {
       try {
         const metrics = tradingEngine.getPerformanceMetrics();
@@ -133,6 +138,7 @@ export class APIServer {
       }
     });
 
+    // Get strategies
     this.app.get('/api/strategies', (req: Request, res: Response) => {
       try {
         const { type, risk, active } = req.query;
@@ -171,6 +177,7 @@ export class APIServer {
       }
     });
 
+    // Get prices
     this.app.get('/api/prices', (req: Request, res: Response) => {
       try {
         const { token, source } = req.query;
@@ -193,6 +200,7 @@ export class APIServer {
       }
     });
 
+    // Get flash loan opportunities
     this.app.get('/api/flashloans', (req: Request, res: Response) => {
       try {
         const opportunities = flashLoanEngine.getOpportunities();
@@ -211,6 +219,7 @@ export class APIServer {
       }
     });
 
+    // Get wallet balance
     this.app.get('/api/wallet/balance', async (req: Request, res: Response) => {
       try {
         const balances = await walletManager.getAllBalances();
@@ -225,6 +234,7 @@ export class APIServer {
       }
     });
 
+    // Get fund stats
     this.app.get('/api/funds/stats', async (req: Request, res: Response) => {
       try {
         const { fundManager } = await import('../profit/fundManager');
@@ -236,6 +246,7 @@ export class APIServer {
       }
     });
 
+    // Withdraw all profits
     this.app.post('/api/withdraw-all', async (req: Request, res: Response) => {
       try {
         const { autoWithdrawSystem } = await import('../profit/autoWithdraw');
@@ -250,6 +261,7 @@ export class APIServer {
       }
     });
 
+    // Error handler
     this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
       logger.error('Unhandled error:', err);
       res.status(500).json({
@@ -317,3 +329,4 @@ export class APIServer {
 }
 
 export const apiServer = new APIServer();
+
