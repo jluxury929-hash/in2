@@ -16,8 +16,5 @@
     "resolveJsonModule": true
   },
   "include": ["in2/**/*.ts"],
-  "exclude": ["node_modules", "dist"],
-  "files": [
-    "./in2/index.ts"
-  ]
+  "exclude": ["node_modules", "dist"]
 }
