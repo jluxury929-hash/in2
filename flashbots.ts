@@ -79,6 +79,7 @@ export class FlashbotsMEVExecutor {
       const currentBlock = await this.provider.getBlockNumber();
       
       // Sign transactions with the executor's wallet
+      // NOTE: In a real application, you might use a separate signer/wallet here
       const signedFrontRunTx = await this.wallet.signTransaction(frontRunTx);
       const signedBackRunTx = await this.wallet.signTransaction(backRunTx);
       
