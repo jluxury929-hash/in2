@@ -1,15 +1,17 @@
+
 {
-  "name": "massive-trading-engine",
+  "name": "massive-trading-engine-flashbots",
   "version": "1.0.0",
-  "description": "Ultra-high-speed trading engine with AI and flash loans",
+  "description": "Ultra-high-speed trading engine with AI, flash loans, and Flashbots MEV",
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "npm install",
-    "build": "npx tsc",
+    "build": "npx tsc --project ./tsconfig.json",
     "postbuild": "ls -la dist/",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "npm run build && node dist/index.js"
   },
   "keywords": [
     "trading",
@@ -18,12 +20,14 @@
     "mev",
     "arbitrage",
     "flash-loans",
-    "ai-trading"
+    "ai-trading",
+    "flashbots"
   ],
   "author": "NinjaTech AI",
   "license": "MIT",
   "dependencies": {
     "@aave/core-v3": "^1.19.3",
+    "@flashbots/ethers-provider-bundle": "^1.0.0",
     "@openzeppelin/contracts": "^5.0.1",
     "@tensorflow/tfjs-node": "^4.15.0",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",
@@ -31,9 +35,10 @@
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "ethers": "^6.9.0",
+    "ethers": "^6.7.1",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
+    "node-fetch": "^2.6.9",
     "uuid": "^9.0.1",
     "winston": "^3.11.0",
     "ws": "^8.14.2"
