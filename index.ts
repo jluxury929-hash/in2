@@ -1,3 +1,152 @@
+import { apiServer } from './api/server';
+import { config } from './config';
+import logger from './utils/logger';
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  logger.info('Received SIGINT, shutting down gracefully...');
+  apiServer.stop();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  logger.info('Received SIGTERM, shutting down gracefully...');
+  apiServer.stop();
+  process.exit(0);
+});
+
+// Start the application
+async function startApp() {
+  try {
+    logger.info('Starting Massive Trading Engine API...');
+    
+    // Start API server
+    apiServer.start();
+    
+    logger.info('Massive Trading Engine API started successfully!');
+    logger.info(`API Server: http://localhost:${config.server.port}`);
+    logger.info(`Environment: ${config.server.environment}`);
+    
+  } catch (error) {
+    logger.error('Failed to start application:', error);
+    process.exit(1);
+  }
+}
+
+startApp();
+export interface Config {
+  server: {
+    port: number;
+    wsPort: number;
+    environment: string;
+  };
+  trading: {
+    maxTradesPerSecond: number;
+    minProfitThresholdUSD: number;
+    maxGasPriceGwei: number;
+    enableFlashLoans: boolean;
+    flashLoanAmountETH: number;
+  };
+  risk: {
+    maxPositionSizeETH: number;
+    maxDailyLossETH: number;
+    stopLossPercent: number;
+    enableRiskLimits: boolean;
+  };
+  strategies: {
+    enableLowRisk: boolean;
+    enableMediumRisk: boolean;
+    enableHighRisk: boolean;
+    maxActiveStrategies: number;
+    rotationIntervalMs: number;
+  };
+  ai: {
+    confidenceThreshold: number;
+    enableOptimization: boolean;
+    retrainingIntervalHours: number;
+  };
+}
+
+export interface Strategy {
+  id: string;
+  name: string;
+  type: string;
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
+  enabled: boolean;
+  priority: number;
+  successRate: number;
+  totalTrades: number;
+  totalProfitUSD: number;
+  parameters: Record<string, any>;
+  lastExecution?: Date;
+}
+
+export interface TradeOpportunity {
+  id: string;
+  type: 'ARBITRAGE' | 'FLASH_LOAN' | 'MEV';
+  tokenA: string;
+  tokenB: string;
+  exchangeA: string;
+  exchangeB: string;
+  priceA: number;
+  priceB: number;
+  profitUSD: number;
+  profitPercent: number;
+  gasEstimate: number;
+  confidence: number;
+  timestamp: Date;
+}
+
+export interface TradeResult {
+  id: string;
+  strategyId: string;
+  opportunity: TradeOpportunity;
+  success: boolean;
+  profitUSD: number;
+  gasUsed: number;
+  transactionHash?: string;
+  executionTime: number;
+  timestamp: Date;
+}
+
+export interface PriceData {
+  token: string;
+  price: number;
+  timestamp: Date;
+  source: string;
+  volume24h?: number;
+  change24h?: number;
+}
+
+export interface FlashLoanOpportunity extends TradeOpportunity {
+  loanAmount: number;
+  protocol: 'AAVE' | 'DYDX';
+  callback: string;
+}
+
+export interface WalletBalance {
+  chain: string;
+  token: string;
+  balance: string;
+  usdValue: number;
+}
+
+export interface PerformanceMetrics {
+  totalTrades: number;
+  successfulTrades: number;
+  failedTrades: number;
+  totalProfitUSD: number;
+  totalLossUSD: number;
+  netProfitUSD: number;
+  averageTradeTime: number;
+  tradesPerSecond: number;
+  successRate: number;
+  sharpeRatio: number;
+  maxDrawdown: number;
+  winRate: number;
+  profitFactor: number;
+  timestamp: number;
+}
 import dotenv from 'dotenv';
 import { Config } from '../types';
 
