@@ -5,25 +5,26 @@
     // Use CommonJS module system for Node.js
     "module": "commonjs",
     "moduleResolution": "node",
-    // Base directory for all source files
+    // Base directory for all source files (assuming files are in the root directory for simplicity)
     "rootDir": ".",
     // Output directory for compiled JavaScript
     "outDir": "./dist",
     "sourceMap": true,
-    "declaration": true,
+    "declaration": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    // Enable all strict type-checking options
-    "strict": true,
+    // Setting strict to false is necessary when compiling existing JS code without extensive type annotations
+    "strict": false,
     "skipLibCheck": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    // --- CRITICAL FIXES FOR JAVASCRIPT ---
+    // This allows the TypeScript compiler (tsc) to process JavaScript files.
+    "allowJs": true,
+    "checkJs": false
+    // --------------------------------------
   },
-  // Include all TypeScript files within the 'in2' directory
-  "include": ["in2/**/*.ts"],
+  // Include ALL JavaScript and TypeScript files in the project root and subdirectories
+  "include": ["**/*.js", "**/*.ts"],
   // Exclude node modules and the output directory from compilation
-  "exclude": ["node_modules", "dist"],
-  // Explicitly list the main entry point
-  "files": [
-    "in2/index.ts"
-  ]
+  "exclude": ["node_modules", "dist"]
 }
