@@ -6,17 +6,10 @@
     "rootDir": ".",
     "outDir": "./dist",
     "sourceMap": true,
-    "declaration": false,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": false,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
     "allowJs": true,
-    "checkJs": false,
-    "noImplicitAny": false
+    "checkJs": false
   },
-  "include": ["**/*.js"],
+  "include": ["index.js", "mev_backend.js", "src/**/*.js"],
   "exclude": ["node_modules", "dist"]
 }
-
