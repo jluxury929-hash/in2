@@ -1,5 +1,15 @@
-// This configuration file dictates how the TypeScript Compiler (tsc), run by 'npm run build',
-// locates, processes, and outputs your source code.
+// Placeholder for Configuration settings (e.g., ports, RPC URLs)
+export const config = {
+    server: {
+        port: 8080,
+        wsPort: 8081,
+        environment: process.env.NODE_ENV || 'development'
+    },
+    ethereum: {
+        rpcUrl: process.env.ETHEREUM_RPC_1 || 'http://localhost:8545',
+    }
+    // Add other configuration sections here
+};
 {
   "compilerOptions": {
     "target": "es2020",
