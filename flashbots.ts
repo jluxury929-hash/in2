@@ -1,4 +1,3 @@
-
 import { ethers } from 'ethers';
 import { FlashbotsBundleProvider } from '@flashbots/ethers-provider-bundle';
 import winston from 'winston';
@@ -17,7 +16,7 @@ interface MEVOpportunity {
 
 export class FlashbotsMEVExecutor {
   private provider: ethers.JsonRpcProvider;
-  private flashbotsProvider: FlashbotsBundleProvider;
+  private flashbotsProvider!: FlashbotsBundleProvider; // Use definite assignment assertion as it's set in initialize
   private wallet: ethers.Wallet;
   private logger: winston.Logger;
 
@@ -79,8 +78,12 @@ export class FlashbotsMEVExecutor {
 
       const currentBlock = await this.provider.getBlockNumber();
       
+      // Sign transactions with the executor's wallet
+      const signedFrontRunTx = await this.wallet.signTransaction(frontRunTx);
+      const signedBackRunTx = await this.wallet.signTransaction(backRunTx);
+      
       return {
-        transactions: [frontRunTx, backRunTx],
+        transactions: [signedFrontRunTx, signedBackRunTx],
         blockNumber: currentBlock + 1
       };
     } catch (error) {
@@ -89,7 +92,7 @@ export class FlashbotsMEVExecutor {
     }
   }
 
-  private async createFrontRunTransaction(targetTx: string, amountIn: string): Promise<ethers.Transaction> {
+  private async createFrontRunTransaction(targetTx: string, amountIn: string): Promise<ethers.TransactionRequest> {
     // Implementation for front-run transaction
     const gasPrice = await this.provider.getFeeData();
     
@@ -100,11 +103,13 @@ export class FlashbotsMEVExecutor {
       maxFeePerGas: gasPrice.maxFeePerGas || ethers.parseUnits("50", "gwei"),
       maxPriorityFeePerGas: gasPrice.maxPriorityFeePerGas || ethers.parseUnits("2", "gwei"),
       value: ethers.parseEther(amountIn),
-      chainId: 1
-    } as ethers.Transaction;
+      chainId: 1,
+      from: this.wallet.address,
+      nonce: await this.provider.getTransactionCount(this.wallet.address)
+    } as ethers.TransactionRequest;
   }
 
-  private async createBackRunTransaction(targetTx: string, amountIn: string): Promise<ethers.Transaction> {
+  private async createBackRunTransaction(targetTx: string, amountIn: string): Promise<ethers.TransactionRequest> {
     // Implementation for back-run transaction
     const gasPrice = await this.provider.getFeeData();
     
@@ -115,8 +120,10 @@ export class FlashbotsMEVExecutor {
       maxFeePerGas: gasPrice.maxFeePerGas || ethers.parseUnits("50", "gwei"),
       maxPriorityFeePerGas: gasPrice.maxPriorityFeePerGas || ethers.parseUnits("2", "gwei"),
       value: 0,
-      chainId: 1
-    } as ethers.Transaction;
+      chainId: 1,
+      from: this.wallet.address,
+      nonce: await this.provider.getTransactionCount(this.wallet.address) + 1 // Ensure higher nonce for sequential execution
+    } as ethers.TransactionRequest;
   }
 
   async scanMEVOpportunities(): Promise<MEVOpportunity[]> {
@@ -127,9 +134,10 @@ export class FlashbotsMEVExecutor {
       const pendingBlock = await this.provider.send("eth_getBlockByNumber", ["pending", true]);
       
       if (pendingBlock && pendingBlock.transactions) {
+        // Iterate over the first 10 pending transactions
         for (const tx of pendingBlock.transactions.slice(0, 10)) {
-          if (typeof tx === 'string') {
-            const opportunity = await this.analyzeTransaction(tx);
+          if (typeof tx !== 'string') { // Ensure tx is a full transaction object if using Ethers 6 provider.send
+            const opportunity = await this.analyzeTransaction(tx.hash);
             if (opportunity) {
               opportunities.push(opportunity);
             }
@@ -152,13 +160,13 @@ export class FlashbotsMEVExecutor {
       const dexAddresses = [
         "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", // Uniswap V2 Router
         "0xE592427A0AEce92De3Edee1F18E0157C05861564", // Uniswap V3 Router
-      ];
+      ].map(addr => addr.toLowerCase());
 
-      if (dexAddresses.includes(tx.to.toLowerCase())) {
+      if (tx.to && dexAddresses.includes(tx.to.toLowerCase())) {
         return {
           type: 'sandwich',
           profit: "0.1", // Estimated profit in ETH
-          transactions: [],
+          transactions: [], // Transactions array would be populated after sandwich creation
           targetBlock: await this.provider.getBlockNumber() + 1
         };
       }
