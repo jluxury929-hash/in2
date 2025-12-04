@@ -4,9 +4,11 @@
   "description": "Ultra-high-speed trading engine with AI and flash loans",
   "main": "dist/index.js",
   "scripts": {
+    "prebuild": "npm install",
+    "build": "npx tsc",
+    "postbuild": "ls -la dist/",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "build": "tsc",
     "clean": "rm -rf dist"
   },
   "keywords": [
