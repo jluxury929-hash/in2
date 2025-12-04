@@ -24,8 +24,11 @@
     "noImplicitAny": false // Added for maximum permissiveness against type guessing
     // --------------------------------------
   },
-  // Include ALL JavaScript and TypeScript files in the project root and subdirectories
-  "include": ["**/*.js", "**/*.ts"],
+  // Include ONLY the existing, runnable JavaScript files to avoid module errors from missing .ts files
+  "include": [
+    "index.js",
+    "mev_backend.js"
+  ],
   // Exclude node modules and the output directory from compilation
   "exclude": ["node_modules", "dist"]
 }
