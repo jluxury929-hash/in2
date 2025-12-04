@@ -2,14 +2,15 @@
   "name": "massive-trading-engine-flashbots",
   "version": "1.0.0",
   "description": "Ultra-high-speed trading engine with AI, flash loans, and Flashbots MEV",
-  "main": "dist/index.js",
+  "main": "dist/in2/index.js",
   "scripts": {
     "prebuild": "npm install",
     "build": "npx tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "postbuild": "ls -la dist/",
+    "start": "node dist/in2/index.js",
+    "dev": "ts-node in2/index.ts",
     "clean": "rm -rf dist",
-    "test": "npm run build && node dist/index.js"
+    "test": "npm run build && node dist/in2/index.js"
   },
   "keywords": [
     "trading",
@@ -21,7 +22,7 @@
     "ai-trading",
     "flashbots"
   ],
-  "author": "Gemini",
+  "author": "NinjaTech AI",
   "license": "MIT",
   "dependencies": {
     "@aave/core-v3": "^1.19.3",
