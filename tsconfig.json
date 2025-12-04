@@ -1,3 +1,5 @@
+// This configuration file dictates how the TypeScript Compiler (tsc), run by 'npm run build',
+// locates, processes, and outputs your source code.
 {
   "compilerOptions": {
     "target": "es2020",
