@@ -3,7 +3,7 @@
     "target": "es2020",
     "module": "commonjs",
     "moduleResolution": "node",
-    "rootDir": ".",
+    "rootDir": "./in2",
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
