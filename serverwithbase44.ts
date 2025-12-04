@@ -1,9 +1,9 @@
 // Placeholder for the Express/WebSocket API Server
 import express, { Application, Request, Response } from 'express';
 import { Server } from 'http';
-import { base44Connector } from '../index'; // Assuming base44Connector is exported from index
-import logger from '../utils/logger';
-import { config } from '../config';
+import { base44Connector } from '../index'; // Adjusted import path
+import logger from '../utils/logger'; // Adjusted import path
+import { config } from '../config'; // Adjusted import path
 
 class ApiServer {
     private app: Application;
