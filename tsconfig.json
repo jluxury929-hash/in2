@@ -1,32 +1,28 @@
-// Placeholder for Configuration settings (e.g., ports, RPC URLs)
-export const config = {
-    server: {
-        port: 8080,
-        wsPort: 8081,
-        environment: process.env.NODE_ENV || 'development'
-    },
-    ethereum: {
-        rpcUrl: process.env.ETHEREUM_RPC_1 || 'http://localhost:8545',
-    }
-    // Add other configuration sections here
-};
 {
   "compilerOptions": {
+    // Target modern JavaScript features
     "target": "es2020",
+    // Use CommonJS module system for Node.js
     "module": "commonjs",
     "moduleResolution": "node",
+    // Base directory for all source files
     "rootDir": ".",
+    // Output directory for compiled JavaScript
     "outDir": "./dist",
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    // Enable all strict type-checking options
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true
   },
+  // Include all TypeScript files within the 'in2' directory
   "include": ["in2/**/*.ts"],
+  // Exclude node modules and the output directory from compilation
   "exclude": ["node_modules", "dist"],
+  // Explicitly list the main entry point
   "files": [
     "in2/index.ts"
   ]
